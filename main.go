@@ -6,6 +6,13 @@ import (
 	"strings"
 )
 
+func getCommands() map[string]func([]string) (int, error) {
+	return map[string]func([]string) (int, error){
+		"1-1": day1part1,
+		"1-2": day1part2,
+	}
+}
+
 func main() {
 	args := os.Args
 	if len(args) < 2 {
