@@ -15,8 +15,8 @@ func getCommands() map[string]func([]string) (int, error) {
 
 func main() {
 	args := os.Args
-	if len(args) < 2 {
-		fmt.Println("Error: not enough arguments\nFirst arg is day [1,2,3,...,25]\nSecond arg is part [1, 2]\nOptional third arg to use test file (test.txt) [t]\nOptional fourth arg is to specify the test file name - example: './AoC2025 1 1 t test1' will run day 1 part 1 against test1.txt")
+	if len(args) < 3 {
+		fmt.Println("Error: not enough arguments\nFirst arg is day [1,2,3,...,25]\nSecond arg is part [1, 2]\nOptional third arg to use test file (test.txt) [t]\nOptional fourth arg is to specify the test file name\n\texample: './AoC2025 1 1 t hello' will run day 1 part 1 against hello.txt")
 		os.Exit(1)
 	}
 
