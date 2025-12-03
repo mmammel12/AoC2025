@@ -12,6 +12,8 @@ func getCommands() map[string]func([]string) (int, error) {
 		"1-2": day1part2,
 		"2-1": day2part1,
 		"2-2": day2part2,
+		"3-1": day3part1,
+		"3-2": day3part2,
 	}
 }
 
