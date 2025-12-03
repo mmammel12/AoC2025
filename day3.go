@@ -2,48 +2,24 @@ package main
 
 import (
 	"math"
-	"strconv"
 )
 
-func day3part1(lines []string) (int, error) {
-	pass := 0
-
-	for _, bank := range lines {
-		length := len(bank)
-		tens := '0'
-		ones := '0'
-
-		for i, b := range bank {
-			if rune(b) > tens && i < length-1 {
-				tens = rune(b)
-				ones = '0'
-			} else if rune(b) > ones {
-				ones = rune(b)
-			}
-		}
-
-		num, err := strconv.Atoi(string(tens) + string(ones))
-		if err != nil {
-			return 0, err
-		}
-		pass += num
+func day3(lines []string, part int) (int, error) {
+	if part == 1 {
+		return day3part1(lines, 2)
 	}
 
-	return pass, nil
+	return day3part1(lines, 12)
 }
 
-func rtoi(r rune) int {
-	return int(r - '0')
-}
-
-func day3part2(lines []string) (int, error) {
+func day3part1(lines []string, length int) (int, error) {
 	pass := 0
 
 	for _, bank := range lines {
 		n := len(bank)
 		left := 0
 		right := 0
-		remaining := 12
+		remaining := length
 		temp := 0
 
 		for remaining > 0 {
@@ -64,4 +40,8 @@ func day3part2(lines []string) (int, error) {
 	}
 
 	return pass, nil
+}
+
+func rtoi(r rune) int {
+	return int(r - '0')
 }

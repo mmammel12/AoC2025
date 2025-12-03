@@ -5,6 +5,14 @@ import (
 	"strconv"
 )
 
+func day1(lines []string, part int) (int, error) {
+	if part == 1 {
+		return day1part1(lines)
+	}
+
+	return day1part2(lines)
+}
+
 func day1part1(lines []string) (int, error) {
 	current := 50
 	pass := 0

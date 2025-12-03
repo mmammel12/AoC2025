@@ -5,6 +5,14 @@ import (
 	"strings"
 )
 
+func day2(lines []string, part int) (int, error) {
+	if part == 1 {
+		return day2part1(lines)
+	}
+
+	return day2part2(lines)
+}
+
 func day2part1(lines []string) (int, error) {
 	pass := 0
 

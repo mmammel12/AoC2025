@@ -3,24 +3,23 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
-func getCommands() map[string]func([]string) (int, error) {
-	return map[string]func([]string) (int, error){
-		"1-1": day1part1,
-		"1-2": day1part2,
-		"2-1": day2part1,
-		"2-2": day2part2,
-		"3-1": day3part1,
-		"3-2": day3part2,
+func getCommands() map[string]func([]string, int) (int, error) {
+	return map[string]func([]string, int) (int, error){
+		"1": day1,
+		"2": day2,
+		"3": day3,
 	}
 }
 
 func main() {
 	args := os.Args
-	if len(args) < 3 {
-		fmt.Println("Error: not enough arguments")
+	part, err := strconv.Atoi(args[2])
+	if len(args) < 3 || err != nil {
+		fmt.Println("Error: invalid arguments")
 		fmt.Println("First arg is day [1,2,3,...,25]")
 		fmt.Println("Second arg is part [1, 2]")
 		fmt.Println("Optional third arg to use test file (test.txt) [t]")
@@ -45,10 +44,10 @@ func main() {
 	lines := strings.Split(string(data), "\n")
 
 	commands := getCommands()
-	commandName := fmt.Sprintf("%v-%v", args[1], args[2])
+	commandName := fmt.Sprintf("%v", args[1])
 
 	if fn, exists := commands[commandName]; exists {
-		ans, err := fn(lines[:len(lines)-1])
+		ans, err := fn(lines[:len(lines)-1], part)
 		if err != nil {
 			fmt.Printf("Error in part 1: %v", err)
 			os.Exit(1)
