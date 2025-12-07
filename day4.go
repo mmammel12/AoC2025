@@ -12,10 +12,10 @@ func day4(lines []string, part int) (int, error) {
 	return day4part2(lines)
 }
 
-func checkNeighbor(lines *[]string, seen *map[string]int, selfX, selfY, neighborX, neighborY int) {
-	if (*lines)[neighborY][neighborX] == '@' {
-		self := fmt.Sprintf("%d-%d", selfX, selfY)
-		neighbor := fmt.Sprintf("%d-%d", neighborX, neighborY)
+func checkNeighbor(lines *[]string, seen *map[string]int, selfCol, selfRow, neighborCol, neighborRow int) {
+	if (*lines)[neighborRow][neighborCol] == '@' {
+		self := fmt.Sprintf("%d-%d", selfCol, selfRow)
+		neighbor := fmt.Sprintf("%d-%d", neighborCol, neighborRow)
 		_, rFound := (*seen)[neighbor]
 		if !rFound {
 			(*seen)[neighbor] = 0
@@ -31,35 +31,35 @@ func day4part1(lines []string) (int, error) {
 	seen := make(map[string]int)
 	linesLength := len(lines)
 	rowLength := len(lines[0])
-	for y, line := range lines {
-		for x, r := range line {
+	for row, line := range lines {
+		for col, r := range line {
 			if r != '@' {
 				continue
 			}
 
-			loc := fmt.Sprintf("%d-%d", x, y)
+			loc := fmt.Sprintf("%d-%d", col, row)
 			_, found := seen[loc]
 			if !found {
 				seen[loc] = 0
 			}
 
 			// check right
-			if x+1 < rowLength {
-				checkNeighbor(&lines, &seen, x, y, x+1, y)
+			if col+1 < rowLength {
+				checkNeighbor(&lines, &seen, col, row, col+1, row)
 			}
 
 			// check down
-			if y+1 < linesLength {
-				checkNeighbor(&lines, &seen, x, y, x, y+1)
+			if row+1 < linesLength {
+				checkNeighbor(&lines, &seen, col, row, col, row+1)
 
 				// check down left
-				if x > 0 {
-					checkNeighbor(&lines, &seen, x, y, x-1, y+1)
+				if col > 0 {
+					checkNeighbor(&lines, &seen, col, row, col-1, row+1)
 				}
 
 				// check down right
-				if x+1 < rowLength {
-					checkNeighbor(&lines, &seen, x, y, x+1, y+1)
+				if col+1 < rowLength {
+					checkNeighbor(&lines, &seen, col, row, col+1, row+1)
 				}
 			}
 
@@ -72,97 +72,77 @@ func day4part1(lines []string) (int, error) {
 	return pass, nil
 }
 
-type Loc struct {
-	x int
-	y int
-}
-type Queue []Loc
-
-func (q *Queue) enqueue(x, y int) {
-	*q = append(*q, Loc{x: x, y: y})
-}
-
-func (q *Queue) dequeue() Loc {
-	loc := (*q)[0]
-	*q = (*q)[1:]
-	return loc
-}
-
-func (q *Queue) isEmpty() bool {
-	return len(*q) == 0
-}
-
 func day4part2(lines []string) (int, error) {
 	pass := 0
 
 	seen := make(map[string]int)
 	qVisited := make(map[string]bool)
-	queue := Queue{}
+	queue := Queue[Loc]{}
 	linesLength := len(lines)
 	rowLength := len(lines[0])
 
-	for y, line := range lines {
-		for x, r := range line {
+	for row, line := range lines {
+		for col, r := range line {
 			if r != '@' {
 				continue
 			}
 
-			loc := fmt.Sprintf("%d-%d", x, y)
+			loc := fmt.Sprintf("%d-%d", col, row)
 			_, found := seen[loc]
 			if !found {
 				seen[loc] = 0
 			}
 
 			// check right
-			if x+1 < rowLength {
-				checkNeighbor(&lines, &seen, x, y, x+1, y)
+			if col+1 < rowLength {
+				checkNeighbor(&lines, &seen, col, row, col+1, row)
 			}
 
 			// check down
-			if y+1 < linesLength {
-				checkNeighbor(&lines, &seen, x, y, x, y+1)
+			if row+1 < linesLength {
+				checkNeighbor(&lines, &seen, col, row, col, row+1)
 
 				// check down left
-				if x > 0 {
-					checkNeighbor(&lines, &seen, x, y, x-1, y+1)
+				if col > 0 {
+					checkNeighbor(&lines, &seen, col, row, col-1, row+1)
 				}
 
 				// check down right
-				if x+1 < rowLength {
-					checkNeighbor(&lines, &seen, x, y, x+1, y+1)
+				if col+1 < rowLength {
+					checkNeighbor(&lines, &seen, col, row, col+1, row+1)
 				}
 			}
 
 			if neighbors := seen[loc]; neighbors < 4 {
-				queue.enqueue(x, y)
+				queue.enqueue(Loc{col, row})
 				qVisited[loc] = true
 			}
 
 		}
 	}
 
-	queueNeighbors := func(x, y int) {
+	queueNeighbors := func(col, row int) {
 		dirs := []Loc{
-			{x: -1, y: -1}, // up left
-			{x: 0, y: -1},  // up
-			{x: 1, y: -1},  // up right
-			{x: -1, y: 0},  // left
-			{x: 1, y: 0},   // right
-			{x: -1, y: 1},  // down left
-			{x: 0, y: 1},   // down
-			{x: 1, y: 1},   // down right
+			{-1, -1}, // up left
+			{0, -1},  // up
+			{1, -1},  // up right
+			{-1, 0},  // left
+			{1, 0},   // right
+			{-1, 1},  // down left
+			{0, 1},   // down
+			{1, 1},   // down right
 		}
 
 		for _, dir := range dirs {
-			checkX := x + dir.x
-			checkY := y + dir.y
-			if checkX >= 0 && checkX < linesLength && checkY >= 0 && checkY < rowLength {
-				loc := fmt.Sprintf("%d-%d", checkX, checkY)
+			checkCol := col + dir.col
+			checkRow := row + dir.row
+			if checkCol >= 0 && checkCol < linesLength && checkRow >= 0 && checkRow < rowLength {
+				loc := fmt.Sprintf("%d-%d", checkCol, checkRow)
 				if _, found := seen[loc]; found {
 					seen[loc]--
 					if seen[loc] < 4 && !qVisited[loc] {
 						qVisited[loc] = true
-						queue.enqueue(checkX, checkY)
+						queue.enqueue(Loc{checkCol, checkRow})
 					}
 				}
 			}
@@ -172,8 +152,8 @@ func day4part2(lines []string) (int, error) {
 	for !queue.isEmpty() {
 		pass++
 		loc := queue.dequeue()
-		delete(seen, fmt.Sprintf("%d-%d", loc.x, loc.y))
-		queueNeighbors(loc.x, loc.y)
+		delete(seen, fmt.Sprintf("%d-%d", loc.col, loc.row))
+		queueNeighbors(loc.col, loc.row)
 	}
 
 	return pass, nil
