@@ -47,7 +47,7 @@ func day7part2(lines []string) (int, error) {
 	n := len(lines)
 	startCol := strings.IndexRune(lines[0], 'S')
 	root := Loc{startCol, 2}
-	ends := make(map[int]int)
+	ends := make(map[int][]Loc) // map[column][]parents
 	seen := make(map[Loc]int)
 	seen[root] = 1
 	q := Queue[Loc]{root}
@@ -87,15 +87,15 @@ func day7part2(lines []string) (int, error) {
 
 		if !leftHit {
 			if _, exists := ends[col-1]; !exists {
-				ends[col-1] = 0
+				ends[col-1] = []Loc{}
 			}
-			ends[col-1] += paths
+			ends[col-1] = append(ends[col-1], current)
 		}
 		if !rightHit {
 			if _, exists := ends[col+1]; !exists {
-				ends[col+1] = 0
+				ends[col+1] = []Loc{}
 			}
-			ends[col+1] += paths
+			ends[col+1] = append(ends[col+1], current)
 		}
 
 		// sort queue to make sure lower rows are not processed too soon
@@ -104,8 +104,10 @@ func day7part2(lines []string) (int, error) {
 		})
 	}
 
-	for _, paths := range ends {
-		pass += paths
+	for _, parents := range ends {
+		for _, parent := range parents {
+			pass += seen[parent]
+		}
 	}
 
 	return pass, nil
