@@ -27,44 +27,14 @@ type boxPair struct {
 	distance float64
 }
 
-type maxHeap []boxPair
-
-func (h maxHeap) Len() int { return len(h) }
-func (h maxHeap) Less(i, j int) bool {
-	return h[i].distance > h[j].distance
-}
-func (h maxHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
-
-func (h *maxHeap) Push(x any) {
-	*h = append(*h, x.(boxPair))
+func (b boxPair) value() float64 {
+	return b.distance
 }
 
-func (h *maxHeap) Pop() any {
-	old := *h
-	n := len(old)
-	item := old[n-1]
-	*h = old[0 : n-1]
-	return item
-}
+type boxSliceSlice [][]box
 
-type minHeap [][]box
-
-func (h minHeap) Len() int { return len(h) }
-func (h minHeap) Less(i, j int) bool {
-	return len(h[i]) < len(h[j])
-}
-func (h minHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
-
-func (h *minHeap) Push(x any) {
-	*h = append(*h, x.([]box))
-}
-
-func (h *minHeap) Pop() any {
-	old := *h
-	n := len(old)
-	item := old[n-1]
-	*h = old[0 : n-1]
-	return item
+func (b boxSliceSlice) value() float64 {
+	return float64(len(b))
 }
 
 func dist(a, b box) float64 {
@@ -87,7 +57,7 @@ func day8part1(lines []string) (int, error) {
 		maxSize = 1000
 	}
 
-	h := maxHeap{}
+	h := MaxHeap[boxPair]{}
 	heap.Init(&h)
 
 	left := 0
@@ -142,7 +112,7 @@ func day8part1(lines []string) (int, error) {
 		}
 	}
 
-	jHeap := minHeap{}
+	jHeap := MinHeap[boxSliceSlice]{}
 	heap.Init(&jHeap)
 	for _, ptr := range jSlice {
 		heap.Push(&jHeap, *ptr)
@@ -159,28 +129,8 @@ func day8part1(lines []string) (int, error) {
 	return pass, nil
 }
 
-type minHeap2 []boxPair
-
-func (h minHeap2) Len() int { return len(h) }
-func (h minHeap2) Less(i, j int) bool {
-	return h[i].distance < h[j].distance
-}
-func (h minHeap2) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
-
-func (h *minHeap2) Push(x any) {
-	*h = append(*h, x.(boxPair))
-}
-
-func (h *minHeap2) Pop() any {
-	old := *h
-	n := len(old)
-	item := old[n-1]
-	*h = old[0 : n-1]
-	return item
-}
-
 func day8part2(lines []string) (int, error) {
-	h := maxHeap{}
+	h := MaxHeap[boxPair]{}
 	heap.Init(&h)
 
 	left := 0
@@ -203,7 +153,7 @@ func day8part2(lines []string) (int, error) {
 
 	data := make([]boxPair, len(h))
 	copy(data, h)
-	mh := minHeap2(data)
+	mh := MinHeap[boxPair](data)
 	heap.Init(&mh)
 
 	pass := 1
