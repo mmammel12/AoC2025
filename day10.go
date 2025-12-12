@@ -111,7 +111,5 @@ func day10part1(lines []string) (int, error) {
 func day10part2(lines []string) (int, error) {
 	presses := 0
 
-	// machines := createMachines(lines)
-
 	return presses, nil
 }
